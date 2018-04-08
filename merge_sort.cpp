@@ -1,71 +1,60 @@
-#include "stdafx.h"
 #include <iostream>
 #include <sstream>
 using namespace std;
-void merge_mid(int *mas, int mas1, int mas2, int mas3){ 
-	int *revmas = new int[mas3 + 1 - mas1];
-	int par, tmp, m, k;
-	par = mas1;
-	tmp = 0;
-	m = mas2 + 1;
-  	while ((par <= mas2) && (m <= mas3)){
-		if (mas[par] <= mas[m])	{
-			revmas[tmp] = mas[par]; par++;
-		}
-		else {
-			revmas[tmp] = mas[m]; m++;
-		}
-		tmp++;
-	}
-  	if (par>mas2)	{
-		for (k = m; k <= mas3; k++)	{
-			revmas[tmp] = mas[k]; tmp++;
-		}
-	}
-	else	{
-  		for (k = par; k <= mas2; k++){
-			revmas[tmp] = mas[k]; tmp++;
-		}
-	}
-	for (k = 0; k <= mas3 - mas1; k++){
-		mas[k + mas1] = revmas[k];
-	}
-	delete[] revmas;
+bool read_numbers(int * mas,int & n){
+    string string;
+    getline(cin, string);
+    istringstream stream(string);
+    bool success = true;
+    for (int i = 0; i < n; ++i) {
+        if (!(stream >> mas[i])) {
+            success = false;
+            break;
+        }
+    }
+    return success;
 }
-void merge_sotring(int *mas, int mas1, int mas3){
-  	int mas2;
-	if (mas1<mas3){
-  		mas2 = (mas1 + mas3) / 2;
-  		merge_sotring(mas, mas1, mas2);
-  		merge_sotring(mas, mas2 + 1, mas3);
-  		merge_mid(mas, mas1, mas2, mas3);
-	}
-}
-bool read_numbers(int * mas, unsigned int n) {
-	string str;
-	getline(cin, str);
-	istringstream stream(str);
-	for (unsigned int i = 0; i < n; ++i) {
-		if (!(stream >> mas[i])) return false;
-	}
-	return true;
+void merge_sort(int * mas, int l_par, int r_par) {
+    int m = (r_par + l_par) / 2;
+    if (r_par == l_par) return;
+    if (r_par - l_par == 1) {
+        if (mas[r_par] < mas[l_par])
+            swap(mas[r_par], mas[l_par]);
+        return;
+    }
+    merge_sort(mas, l_par, m);
+    merge_sort(mas, m + 1, r_par);
+    int * tmp = new int [r_par - l_par + 1] ;
+    int l_t = l_par, r_t = m + 1, j = 0;
+    while (r_par - l_par + 1 != j) {
+        if (l_t > m)  tmp[j++] = mas[r_t++];
+        else if (r_t > r_par)   tmp[j++] = mas[l_t++];
+        else if (mas[l_t] > mas[r_t])   tmp[j++] = mas[r_t++];
+        else tmp[j++] = mas[l_t++];
+    }
+    for (int i = 0; i < j; i++) mas[i + l_par] = tmp[i];
+    delete[] tmp;
 }
 int main() {
-	int n = 0;
-	if ((cin >> n) && (n>0)) {
-		string str;
-		getline(cin, str);
-		istringstream stream(str);
-		int * mas = new int[n];
-		if (read_numbers(mas, n)) {
-			merge_sotring(mas, 0, n-1);
-			for (int i = 0; i < n; ++i) {
-				cout << mas[i] << " ";
-			}
-		}
-		else cout << "An error has occured while reading input data." << endl;
-		delete[] mas;
-	}
-	else cout << "An error has occured while reading input data." << endl;
-	return 0;cin.get();
+    int n;
+    string str;
+    getline(cin, str);
+    istringstream stream(str);
+    if (stream >> n && n > 0){
+        int * mas = new int[n];
+        if (read_numbers(mas,n)){
+            merge_sort(mas, 0, n - 1);
+            for (int i = 0; i < n; i++) cout << mas[i] << " ";
+            delete[] mas;
+        }
+        else {
+            cout << "An error has occured while reading input data.";
+            delete[] mas;
+        }
+    }
+    else {
+        cout << "An error has occured while reading input data.";
+    }
+    cin.get();
+    return 0;
 }
