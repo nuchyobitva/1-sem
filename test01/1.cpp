@@ -1,3 +1,4 @@
+//old version
 #include <iostream>
 #include <cstring>
 using namespace std;
@@ -14,3 +15,17 @@ int main()
     }
     return 0;
 }
+//the new one
+/*
+#include <iostream>
+#include <string>
+int main(){
+  std::string s;
+  getline(std::cin,s);
+  for (int i=0;i<s.size();i++){
+    if(s[i]==' ') std::cout<<"%"<<20;
+    else std::cout<<s[i];
+  }
+  return 0;
+}
+*/
